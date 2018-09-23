@@ -1,0 +1,76 @@
+*** Creating Trace Output File '.\Obj\Project.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\obj\main.o"'
+### List of Objects: adding '".\obj\stm32f10x_it.o"'
+### List of Objects: adding '".\obj\uart1gpsout.o"'
+### List of Objects: adding '".\obj\uart2gpsin.o"'
+### List of Objects: adding '".\obj\gpstask.o"'
+### List of Objects: adding '".\obj\gps_test.o"'
+### List of Objects: adding '".\obj\misc.o"'
+### List of Objects: adding '".\obj\stm32f10x_flash.o"'
+### List of Objects: adding '".\obj\stm32f10x_gpio.o"'
+### List of Objects: adding '".\obj\stm32f10x_rcc.o"'
+### List of Objects: adding '".\obj\stm32f10x_adc.o"'
+### List of Objects: adding '".\obj\stm32f10x_bkp.o"'
+### List of Objects: adding '".\obj\stm32f10x_cec.o"'
+### List of Objects: adding '".\obj\stm32f10x_crc.o"'
+### List of Objects: adding '".\obj\stm32f10x_dac.o"'
+### List of Objects: adding '".\obj\stm32f10x_dbgmcu.o"'
+### List of Objects: adding '".\obj\stm32f10x_dma.o"'
+### List of Objects: adding '".\obj\stm32f10x_exti.o"'
+### List of Objects: adding '".\obj\stm32f10x_fsmc.o"'
+### List of Objects: adding '".\obj\stm32f10x_iwdg.o"'
+### List of Objects: adding '".\obj\stm32f10x_pwr.o"'
+### List of Objects: adding '".\obj\stm32f10x_rtc.o"'
+### List of Objects: adding '".\obj\stm32f10x_tim.o"'
+### List of Objects: adding '".\obj\stm32f10x_usart.o"'
+### List of Objects: adding '".\obj\stm32f10x_wwdg.o"'
+### List of Objects: adding '".\obj\core_cm3.o"'
+### List of Objects: adding '".\obj\system_stm32f10x.o"'
+### List of Objects: adding '".\obj\startup_stm32f10x_md.o"'
+### List of Objects: adding '".\obj\os_dbg.o"'
+### List of Objects: adding '".\obj\os_cpu_c.o"'
+### List of Objects: adding '".\obj\os_cpu_a.o"'
+### List of Objects: adding '".\obj\os_core.o"'
+### List of Objects: adding '".\obj\os_flag.o"'
+### List of Objects: adding '".\obj\os_mbox.o"'
+### List of Objects: adding '".\obj\os_mem.o"'
+### List of Objects: adding '".\obj\os_mutex.o"'
+### List of Objects: adding '".\obj\os_q.o"'
+### List of Objects: adding '".\obj\os_sem.o"'
+### List of Objects: adding '".\obj\os_task.o"'
+### List of Objects: adding '".\obj\os_time.o"'
+### List of Objects: adding '".\obj\os_tmr.o"'
+### List of Objects: adding '".\obj\os_apphooks.o"'
+### List of Objects: adding '".\obj\cpu_c.o"'
+### List of Objects: adding '".\obj\cpu_a.o"'
+### List of Objects: adding '".\obj\lib_mem.o"'
+### List of Objects: adding '".\obj\lib_str.o"'
+### List of Objects: adding '".\obj\lib_mem_a.o"'
+### List of Objects: adding '".\obj\context.o"'
+### List of Objects: adding '".\obj\generate.o"'
+### List of Objects: adding '".\obj\generator.o"'
+### List of Objects: adding '".\obj\gmath.o"'
+### List of Objects: adding '".\obj\info.o"'
+### List of Objects: adding '".\obj\parse.o"'
+### List of Objects: adding '".\obj\parser.o"'
+### List of Objects: adding '".\obj\sentence.o"'
+### List of Objects: adding '".\obj\time.o"'
+### List of Objects: adding '".\obj\tok.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\obj\main.o" ".\obj\stm32f10x_it.o" ".\obj\uart1gpsout.o" ".\obj\uart2gpsin.o" ".\obj\gpstask.o" ".\obj\gps_test.o" ".\obj\misc.o" ".\obj\stm32f10x_flash.o" ".\obj\stm32f10x_gpio.o" ".\obj\stm32f10x_rcc.o" ".\obj\stm32f10x_adc.o" ".\obj\stm32f10x_bkp.o" ".\obj\stm32f10x_cec.o" ".\obj\stm32f10x_crc.o" ".\obj\stm32f10x_dac.o" ".\obj\stm32f10x_dbgmcu.o" ".\obj\stm32f10x_dma.o" ".\obj\stm32f10x_exti.o" ".\obj\stm32f10x_fsmc.o" ".\obj\stm32f10x_iwdg.o" ".\obj\stm32f10x_pwr.o" ".\obj\stm32f10x_rtc.o" ".\obj\stm32f10x_tim.o" ".\obj\stm32f10x_usart.o" ".\obj\stm32f10x_wwdg.o" ".\obj\core_cm3.o" ".\obj\system_stm32f10x.o" ".\obj\startup_stm32f10x_md.o" ".\obj\os_dbg.o" ".\obj\os_cpu_c.o" ".\obj\os_cpu_a.o" ".\obj\os_core.o" ".\obj\os_flag.o" ".\obj\os_mbox.o" ".\obj\os_mem.o" ".\obj\os_mutex.o" ".\obj\os_q.o" ".\obj\os_sem.o" ".\obj\os_task.o" ".\obj\os_time.o" ".\obj\os_tmr.o" ".\obj\os_apphooks.o" ".\obj\cpu_c.o" ".\obj\cpu_a.o" ".\obj\lib_mem.o" ".\obj\lib_str.o" ".\obj\lib_mem_a.o" ".\obj\context.o" ".\obj\generate.o" ".\obj\generator.o" ".\obj\gmath.o" ".\obj\info.o" ".\obj\parse.o" ".\obj\parser.o" ".\obj\sentence.o" ".\obj\time.o" ".\obj\tok.o" 
+--library_type=microlib --strict --scatter ".\Obj\Project.sct" 
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\List\Project.map" -o .\Obj\Project.axf### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Obj\Project.axf'
+### ADS-LD Command File: '.\Obj\Project.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Obj\Project.lnp', Handle=0x0000072C
+### Writing '.lnp' file
+### ADS-LD Command file '.\Obj\Project.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 1 errors
+### Updating obj list
+### LDADS_file() completed.

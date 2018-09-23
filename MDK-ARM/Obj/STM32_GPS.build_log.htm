@@ -1,0 +1,180 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: ¦ÌVision V5.14.0.0
+Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: yekaifeng Microsoft, Microsoft, LIC=8VR8T-R52E5-KBSER-KBEZT-YPS1T-8KZ3K
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Standard  Version: 5.14.0.0
+Toolchain Path:  D:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.05 update 1 (build 106)
+Assembler:       Armasm.exe V5.05 update 1 (build 106)
+Linker/Locator:  ArmLink.exe V5.05 update 1 (build 106)
+Library Manager: ArmAr.exe V5.05 update 1 (build 106)
+Hex Converter:   FromElf.exe V5.05 update 1 (build 106)
+CPU DLL:         SARMCM3.DLL V5.14.0.0
+Dialog DLL:      DARMSTM.DLL V1.65.0.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.14.0_KEIL
+Dialog DLL:      TARMSTM.DLL V1.64.0.0
+ 
+<h2>Project:</h2>
+G:\Keil\stm32\STM32_uCOS_GPS\MDK-ARM\Project.uvprojx
+Project File Date:  09/16/2018
+
+<h2>Output:</h2>
+Build target 'blkeji'
+compiling main.c...
+..\USER\main.c(148): warning:  #223-D: function "USART1_Configuration" declared implicitly
+        USART1_Configuration();
+..\USER\main.c(149): warning:  #223-D: function "USART2_Configuration" declared implicitly
+          USART2_Configuration();
+..\USER\main.c: 2 warnings, 0 errors
+compiling stm32f10x_it.c...
+compiling uart1GpsOut.c...
+compiling uart2GpsIn.c...
+..\USER\uart2GpsIn.c(10): warning:  #177-D: variable "dataFlag" was declared but never referenced
+  static int dataFlag = 1;
+..\USER\uart2GpsIn.c: 1 warning, 0 errors
+compiling gpsTask.c...
+..\USER\gpsTask.c(46): warning:  #550-D: variable "ret" was set but never used
+        u8 ret = 0;
+..\USER\gpsTask.c(52): warning:  #177-D: variable "buffer" was declared but never referenced
+        char buffer[80];
+..\USER\gpsTask.c(79): warning:  #111-D: statement is unreachable
+        printf("=========GPGSA_CallBack=====\n");
+..\USER\gpsTask.c(91): warning:  #111-D: statement is unreachable
+        printf("=========GPGSV_CallBack=====\n");
+..\USER\gpsTask.c(100): warning:  #223-D: function "initParserCallBack" declared implicitly
+      initParserCallBack(GPRMC_CallBack,GPGGA_CallBack,
+..\USER\gpsTask.c(113): warning:  #223-D: function "nmea_pack_type" declared implicitly
+        pack_type = nmea_pack_type(&buff[1],size);
+..\USER\gpsTask.c(116): warning:  #223-D: function "nmea_parse_GPRMC" declared implicitly
+                         nmea_parse_GPRMC(buff,size,&pack);
+..\USER\gpsTask.c(125): warning:  #223-D: function "nmea_gen_GPRMC" declared implicitly
+                         nmea_gen_GPRMC(&buff[0],300, &pack);
+..\USER\gpsTask.c(127): warning:  #223-D: function "RTC_Set" declared implicitly
+                         RTC_Set(2020,10,8,18,18,18);
+..\USER\gpsTask.c(130): warning:  #223-D: function "nmea_parse_GPGSA" declared implicitly
+                         nmea_parse_GPGSA(buff,size,&gsaPack);
+..\USER\gpsTask.c(135): warning:  #223-D: function "nmea_parse_GPGSV" declared implicitly
+                         nmea_parse_GPGSV(buff,size,&gsvpack);
+..\USER\gpsTask.c(161): warning:  #223-D: function "nmea_generate" declared implicitly
+      nmea_generate(&buff[0], 100, &info,GPRMC);
+..\USER\gpsTask.c(167): warning:  #177-D: variable "dst" was declared but never referenced
+        double dst;
+..\USER\gpsTask.c(168): warning:  #550-D: variable "from_pos" was set but never used
+        nmeaPOS from_pos,to_pos;
+..\USER\gpsTask.c(168): warning:  #550-D: variable "to_pos" was set but never used
+        nmeaPOS from_pos,to_pos;
+..\USER\gpsTask.c(169): warning:  #177-D: variable "buff_sz" was declared but never referenced
+        char buff_sz;
+..\USER\gpsTask.c(171): warning:  #177-D: variable "data" was declared but never referenced
+        char data[] = {"$GPRMC,085432.00,A,2234.72646,N,11354.44461,E,0.472,,050918,,,A*7B"};
+..\USER\gpsTask.c: 17 warnings, 0 errors
+compiling nmeaParse.c...
+..\USER\nmeaParse.c(807): warning:  #223-D: function "nmea_scanf" declared implicitly
+          success = (3 == nmea_scanf(buff, buff_sz,
+..\USER\nmeaParse.c(838): warning:  #223-D: function "memset" declared implicitly
+      memset(pack, 0, sizeof(nmeaGPGGA));
+..\USER\nmeaParse.c(840): warning:  #223-D: function "nmea_scanf" declared implicitly
+      if(14 != nmea_scanf(buff, buff_sz,
+..\USER\nmeaParse.c(851): warning:  #223-D: function "strlen" declared implicitly
+      if(0 != _nmea_parse_time(&time_buff[0], (int)strlen(&time_buff[0]), &(pack->utc)))
+..\USER\nmeaParse.c(872): warning:  #223-D: function "memset" declared implicitly
+      memset(pack, 0, sizeof(nmeaGPRMC));
+..\USER\nmeaParse.c(874): warning:  #223-D: function "nmea_scanf" declared implicitly
+      nsen = nmea_scanf(buff, buff_sz,
+..\USER\nmeaParse.c(888): warning:  #223-D: function "strlen" declared implicitly
+      if(0 != _nmea_parse_time(&time_buff[0], (int)strlen(&time_buff[0]), &(pack->utc)))
+..\USER\nmeaParse.c(910): warning:  #223-D: function "memset" declared implicitly
+      memset(pack, 0, sizeof(nmeaGPGSA));
+..\USER\nmeaParse.c(912): warning:  #223-D: function "nmea_scanf" declared implicitly
+      if(17 != nmea_scanf(buff, buff_sz,
+..\USER\nmeaParse.c(937): warning:  #223-D: function "memset" declared implicitly
+      memset(pack, 0, sizeof(nmeaGPGSV));
+..\USER\nmeaParse.c(939): warning:  #223-D: function "nmea_scanf" declared implicitly
+      nsen = nmea_scanf(buff, buff_sz,
+..\USER\nmeaParse.c(973): warning:  #223-D: function "memset" declared implicitly
+      memset(pack, 0, sizeof(nmeaGPVTG));
+..\USER\nmeaParse.c(975): warning:  #223-D: function "nmea_scanf" declared implicitly
+      if(8 != nmea_scanf(buff, buff_sz,
+..\USER\nmeaParse.c(1029): warning:  #223-D: function "memcmp" declared implicitly
+      else if(0 == memcmp(buff, pheads[0], 5))
+..\USER\nmeaParse.c: 14 warnings, 0 errors
+compiling gmath.c...
+..\USER\gmath.c(29): warning:  #223-D: function "printf" declared implicitly
+            printf("Distance=%0.3fm  ", s);
+..\USER\gmath.c(31): warning:  #223-D: function "printf" declared implicitly
+            printf("Distance=%0.3fkm", s/1000);
+..\USER\gmath.c: 2 warnings, 0 errors
+compiling tok.c...
+compiling nmeaGenerate.c...
+compiling rtc.c...
+..\USER\rtc.c(49): warning:  #223-D: function "printf" declared implicitly
+      printf("RTC_Set %02d:%02d:%02d",hour,min,sec);
+..\USER\rtc.c(129): warning:  #223-D: function "printf" declared implicitly
+                printf("RTC not yet configured....");
+..\USER\rtc.c(141): warning:  #223-D: function "printf" declared implicitly
+                        printf("Power On Reset occurred....");
+..\USER\rtc.c(146): warning:  #223-D: function "printf" declared implicitly
+                        printf("External Reset occurred....");
+..\USER\rtc.c(149): warning:  #223-D: function "printf" declared implicitly
+                printf("No need to configure RTC....");
+..\USER\rtc.c(164): warning:  #223-D: function "printf" declared implicitly
+        printf("ReceiveAndroidTim_paramater %2x,%2x,%2x,%2x",tr_fival,tr_seval,tr_thval,tr_forval);
+..\USER\rtc.c(231): warning:  #223-D: function "printf" declared implicitly
+      printf("%4d/%02d/%02d %02d:%02d:%02d\n",timer.w_year,timer.w_month,timer.w_date,
+..\USER\rtc.c: 7 warnings, 0 errors
+compiling misc.c...
+compiling stm32f10x_flash.c...
+compiling stm32f10x_gpio.c...
+compiling stm32f10x_rcc.c...
+compiling stm32f10x_adc.c...
+compiling stm32f10x_bkp.c...
+compiling stm32f10x_cec.c...
+compiling stm32f10x_crc.c...
+compiling stm32f10x_dac.c...
+compiling stm32f10x_dbgmcu.c...
+compiling stm32f10x_dma.c...
+compiling stm32f10x_exti.c...
+compiling stm32f10x_fsmc.c...
+compiling stm32f10x_iwdg.c...
+compiling stm32f10x_pwr.c...
+compiling stm32f10x_rtc.c...
+compiling stm32f10x_tim.c...
+compiling stm32f10x_usart.c...
+compiling stm32f10x_wwdg.c...
+compiling core_cm3.c...
+compiling system_stm32f10x.c...
+compiling os_dbg.c...
+compiling os_cpu_c.c...
+compiling os_core.c...
+compiling os_flag.c...
+compiling os_mbox.c...
+compiling os_mem.c...
+compiling os_mutex.c...
+compiling os_q.c...
+compiling os_sem.c...
+compiling os_task.c...
+compiling os_time.c...
+compiling os_tmr.c...
+compiling OS_AppHooks.c...
+compiling cpu_c.c...
+compiling lib_mem.c...
+compiling lib_str.c...
+linking...
+Program Size: Code=20792 RO-data=1408 RW-data=248 ZI-data=9880  
+FromELF: creating hex file...
+".\Obj\STM32_GPS.axf" - 0 Error(s), 43 Warning(s).
+
+<h2>Collection of Component include folders:</h2>
+  G:\Keil\stm32\STM32_uCOS_GPS\MDK-ARM\RTE
+  D:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.0.5\Device\Include
+
+<h2>Collection of Component Files used:</h2>
+</pre>
+</body>
+</html>
