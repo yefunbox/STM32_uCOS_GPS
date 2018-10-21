@@ -55,58 +55,59 @@ static struct_GPSRMC GPS_RMC_Data;
 static struct_GPSGGA GPS_GGA_Data;
 static struct_GPSGSA GPS_GSA_Data;
 static struct_GPSGSV GPS_GSV_Data;
+static nmeaGPVTG     GPS_VTG_Data;
+
 static struct_parser_callback Parser_CallBack;
 
-static void ParserGPGGA(char SBuf)
-{
+static void ParserGPGGA(char SBuf) {
     switch (SBuf)
     {
-    case '*':   //语句结束
-        NMEA_Start=0;
-		Parser_CallBack.gpggaCallback(GPS_GGA_Data);
-        break;
-    case ',':   //该字段结束
-        NMEA_MsgBlock++;
-        NMEA_MsgBlockDatIndex=0;
-        break;
-    default:    //字段字符
-        switch (NMEA_MsgBlock)  // 判断当前处于哪个字段
-        {
-            /*
-            case 0:             // <1> UTC时间,hhmmss
-                break;
-            case 1:             // <2> 纬度 ddmm.mmmm
-                break;
-            case 2:             // <3> 纬度半球 N/S
-                break;
-            case 3:             // <4> 经度 dddmm.mmmm
-                break;
-            case 4:             // <5> 经度半球 E/W
-                break;
-            */
-        case 5:             // <6> GPS状态 0=未定位, 1=非差分定位, 2=差分定位, 6=正在估算
-            GPS_GGA_Data.PositionFix=SBuf;
-            break;
-        case 6:             // <7> 正在使用的卫星数量 00~12
-            switch (NMEA_MsgBlockDatIndex)
-            {
-            case 0:
-                GPS_GGA_Data.SatUsed=(SBuf-'0')*10;
-                break;
-            case 1:
-                GPS_GGA_Data.SatUsed+=(SBuf-'0');
-                break;
-            }
-            break;
-            /*
-            case 7:             //<8> HDOP水平精度因子 0.5~99.9
-                GPS_GGA_Data.HDOP[GPS_GGA_Data.BlockIndex]=SBuf;
-                break;
-            */
-        case 8:         //<9> 海拔高度 -9999.9~99999.9
-            GPS_GGA_Data.Altitude[NMEA_MsgBlockDatIndex]=SBuf;
-            break;
-        }
+        case '*':   //语句结束
+                 NMEA_Start=0;
+		         Parser_CallBack.gpggaCallback(GPS_GGA_Data);
+                 break;
+        case ',':   //该字段结束
+                 NMEA_MsgBlock++;
+                 NMEA_MsgBlockDatIndex=0;
+                 break;
+        default:    //字段字符
+                switch (NMEA_MsgBlock)  // 判断当前处于哪个字段
+                {
+			            /*
+			            case 0:             // <1> UTC时间,hhmmss
+			                break;
+			            case 1:             // <2> 纬度 ddmm.mmmm
+			                break;
+			            case 2:             // <3> 纬度半球 N/S
+			                break;
+			            case 3:             // <4> 经度 dddmm.mmmm
+			                break;
+			            case 4:             // <5> 经度半球 E/W
+			                break;
+			            */
+                    case 5:      // <6> GPS状态 0=未定位, 1=非差分定位, 2=差分定位, 6=正在估算
+                           GPS_GGA_Data.PositionFix=SBuf;
+                           break;
+                    case 6:      // <7> 正在使用的卫星数量 00~12
+                          switch (NMEA_MsgBlockDatIndex)
+                          {
+                              case 0:
+                                     GPS_GGA_Data.SatUsed=(SBuf-'0')*10;
+                                     break;
+                               case 1:
+                                     GPS_GGA_Data.SatUsed+=(SBuf-'0');
+                                     break;
+                          }
+                          break;
+                     /*
+                                    case 7:             //<8> HDOP水平精度因子 0.5~99.9
+                                            GPS_GGA_Data.HDOP[GPS_GGA_Data.BlockIndex]=SBuf;
+                                            break;
+                                   */
+                     case 8:         //<9> 海拔高度 -9999.9~99999.9
+                           GPS_GGA_Data.Altitude[NMEA_MsgBlockDatIndex]=SBuf;
+                           break;
+                  }
         NMEA_MsgBlockDatIndex++;     //字段字符索引++, 指向下一个字符
     }
 }
@@ -497,16 +498,39 @@ static void ParserGPGSV(char SBuf)
         NMEA_MsgBlockDatIndex++;  // 该字段字符序号 +1
     }
 }
+char dec[] ="326.22"; //326.22
+static void ParserGPVTG(char SBuf) {
+    switch (SBuf)
+    {
+        case '*':   //语句结束
+            NMEA_Start=0;
+			GPS_VTG_Data.dec = strtof(dec,NULL);
+		    Parser_CallBack.gpvtgCallback(GPS_VTG_Data);
+            break;
+        case ',':   //该字段结束
+            NMEA_MsgBlock++;
+            NMEA_MsgBlockDatIndex=0;
+            break;
+        default:    //字段字符
+            switch (NMEA_MsgBlock) { // 判断当前处于哪个字段
+                case 0:              // <1> 运动角度，000 - 359，（前导位数不足则补0）
+                     switch (NMEA_MsgBlockDatIndex) {
+				        case 0:
+					          break;
+				        case 1:
+							  break;
+			        }
+				    break;
+            }
+		    NMEA_MsgBlockDatIndex++;	 //字段字符索引++, 指向下一个字符
+            break;
+    }
+}
 
-u8 GPS_Parser(char SBuf)
-
-{
-
+u8 GPS_Parser(char SBuf) {
     u8 i;
 
     GPS_Parse_Status=0;
-
-
 
     if (NMEA_Start)
 
@@ -543,7 +567,9 @@ u8 GPS_Parser(char SBuf)
                 ParserGPRMC(SBuf);
 
                 break;
-
+            case NMEA_GPVTG:
+				ParserGPVTG(SBuf);
+				break;
             default:    //脦脼路拧脢露卤冒碌脛啪帽脢艙, 啪沤脦禄
 
                 NMEA_Start=0;
@@ -664,7 +690,9 @@ u8 GPS_Parser(char SBuf)
 
                 }
 
-
+                if(NMEA_MsgTypeBuff[3] == 'T' && NMEA_MsgTypeBuff[4] == 'G') {
+                    NMEA_MsgType = NMEA_GPVTG;
+				}
 
                 // GPS 脢盲鲁枚脣鲁脨貌 - 5
 
@@ -792,11 +820,13 @@ u8 GPS_Parser(char SBuf)
 
 }
 void initParserCallBack(GPRMC_CALLBACK gprmcCallback,GPGGA_CALLBACK gpggaCallback,
-	                       GPGSA_CALLBACK gpgsaCallback,GPGSV_CALLBACK gpgsvCallback){
+	                       GPGSA_CALLBACK gpgsaCallback,GPGSV_CALLBACK gpgsvCallback,
+	                       GPVTG_CALLBACK gpVTGCallback){
 	Parser_CallBack.gprmcCallback = gprmcCallback;
 	Parser_CallBack.gpggaCallback = gpggaCallback;
 	Parser_CallBack.gpgsaCallback = gpgsaCallback;
 	Parser_CallBack.gpgsvCallback = gpgsvCallback;
+	Parser_CallBack.gpvtgCallback = gpVTGCallback;
 }
 int _nmea_parse_time(const char *buff, int buff_sz, nmeaTIME *res)
 {

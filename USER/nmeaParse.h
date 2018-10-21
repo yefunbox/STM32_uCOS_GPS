@@ -62,10 +62,27 @@ typedef struct
     struct_SatInfo SatInfo[12];
 }struct_GPSGSV;
 
+/**
+ * VTG packet information structure (Track made good and ground speed)
+ */
+typedef struct _nmeaGPVTG
+{
+    double  dir;        /**< True track made good (degrees) */
+    char    dir_t;      /**< Fixed text 'T' indicates that track made good is relative to true north */
+    double  dec;        /**< Magnetic track made good */
+    char    dec_m;      /**< Fixed text 'M' */
+    double  spn;        /**< Ground speed, knots */
+    char    spn_n;      /**< Fixed text 'N' indicates that speed over ground is in knots */
+    double  spk;        /**< Ground speed, kilometers per hour */
+    char    spk_k;      /**< Fixed text 'K' indicates that speed over ground is in kilometers/hour */
+
+} nmeaGPVTG;
+
 typedef  void (*GPRMC_CALLBACK)(struct_GPSRMC);
 typedef  void (*GPGGA_CALLBACK)(struct_GPSGGA);
 typedef  void (*GPGSA_CALLBACK)(struct_GPSGSA);
 typedef  void (*GPGSV_CALLBACK)(struct_GPSGSV);
+typedef  void (*GPVTG_CALLBACK)(nmeaGPVTG);
 
 typedef struct
 {
@@ -73,7 +90,7 @@ typedef struct
     GPGGA_CALLBACK  gpggaCallback;
     GPGSA_CALLBACK  gpgsaCallback;
 	GPGSV_CALLBACK  gpgsvCallback;
-
+	GPVTG_CALLBACK  gpvtgCallback;
 }struct_parser_callback;
 
 #define NMEA_NULL   0x00        //GPS语句类型
@@ -81,6 +98,7 @@ typedef struct
 #define NMEA_GPGSA  0x02
 #define NMEA_GPGSV  0x04
 #define NMEA_GPRMC  0x08
+#define NMEA_GPVTG  0x10
 
 #define GPS_PARSE_FAILURE           0x00
 #define GPS_PARSE_START             0x01
@@ -259,22 +277,6 @@ typedef struct _nmeaINFO
 	int txt_level;
 	char *txt;
 } nmeaINFO;
-
-/**
- * VTG packet information structure (Track made good and ground speed)
- */
-typedef struct _nmeaGPVTG
-{
-    double  dir;        /**< True track made good (degrees) */
-    char    dir_t;      /**< Fixed text 'T' indicates that track made good is relative to true north */
-    double  dec;        /**< Magnetic track made good */
-    char    dec_m;      /**< Fixed text 'M' */
-    double  spn;        /**< Ground speed, knots */
-    char    spn_n;      /**< Fixed text 'N' indicates that speed over ground is in knots */
-    double  spk;        /**< Ground speed, kilometers per hour */
-    char    spk_k;      /**< Fixed text 'K' indicates that speed over ground is in kilometers/hour */
-
-} nmeaGPVTG;
 
 
 #endif

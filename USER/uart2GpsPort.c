@@ -3,7 +3,7 @@
 extern OS_EVENT* g_MesgQ;
 extern struct_gpsDataMQ  gpsDataMQ;
 #define MAX_BUFFER_SIZE 100
-static char gpsData[2][MAX_BUFFER_SIZE];
+static char gpsData[3][MAX_BUFFER_SIZE];
 static char ubxData[50];
 
 char* g_gpsData_ptr;
@@ -115,7 +115,7 @@ void receivOneFrameData(u8 dat) {
 			gpsDataMQ.size = dataIndix;
 			gpsDataMQ.mq_type = 1;
 			g_gpsData_ptr = gpsData[flag];
-			flag = (flag+1)%2;
+			flag = (flag+1)%3;
 			OSQPost(g_MesgQ, (void*)&gpsDataMQ);
 		}
 	} else if(dat == '$') {
