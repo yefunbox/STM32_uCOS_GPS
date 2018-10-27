@@ -118,6 +118,20 @@ typedef struct
 	u8 size;
     u8* pData;
 }struct_gpsDataMQ;
+typedef struct {
+    u8* nmeaFramePtr;
+	u8  nmeaFrameSize;
+    u8* nmeaPtrRMC;
+    u8* nmeaPtrVTG;
+    u8* nmeaPtrGGA;	
+    u8* nmeaPtrGSA;
+    u8* nmeaPtrGSV1;
+    u8* nmeaPtrGSV2;
+    u8* nmeaPtrGSV3;
+    u8* nmeaPtrGSV4;
+    u8* nmeaPtrGLL;
+    u8* ubxFramePtr;
+}GpsFrame;
 
 typedef struct _nmeaTIME
 {

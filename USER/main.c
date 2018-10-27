@@ -139,7 +139,7 @@ static  void  App_TaskStart (void *p_arg)
 	NVIC_Configuration();
 	GPIO_Configuration();
     USART1_Configuration();
-	USART2_Configuration();
+	//USART2_Configuration();
 	RTC_INIT();
 #if (OS_TASK_STAT_EN > 0)
     OSStatInit();                                            /* Determine CPU capacity.                              */

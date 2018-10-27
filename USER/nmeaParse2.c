@@ -167,7 +167,9 @@ void NMEA_GPVTG_Analysis(nmea_msg *gpsx,u8 *buf)
        gpsx->dir = (float)NMEA_Str2num(p1+posx,&dx);
 	   gpsx->dir = gpsx->dir/NMEA_Pow(10,dx);
        //printf("gpsx.dir = %f,dx = %d\n",gpsx->dir,dx);
-    }
+    } else {
+       gpsx->dir = (double)0xff;
+	}
     posx=NMEA_Comma_Pos(p1,7);                              //得到地面速率
     if(posx!=0XFF)
     {
@@ -191,9 +193,96 @@ void NMEA_GPGGA_Analysis(nmea_msg *gpsx,u8 *buf)
     posx=NMEA_Comma_Pos(p1,8);                              //HDOP水平精度因子（0.5 - 99.9）
     if(posx!=0XFF) { 
         gpsx->hdop=NMEA_Str2num(p1+posx,&dx)/NMEA_Pow(10,dx); //去掉小数,保留整数
-    }
+    } else {
+		gpsx->hdop = 0xff;
+	}
     posx=NMEA_Comma_Pos(p1,9);                              //得到海拔高度
     if(posx!=0XFF)gpsx->altitude=NMEA_Str2num(p1+posx,&dx);  
+}
+/*
+**setup为0时，从头开始拷贝，否则从末尾开始拷贝
+**/
+void strcpy(char * dest,char * src,u8 setup) {// 实现src到dest的复制
+     char i = 0,length;
+     char* p;
+     length = strlen(src);
+     p = src+setup;
+
+     if(setup == 0) {
+         while(i < length) {  //把src字符串的内容复制到dest下
+              dest[i] = src[i];
+              i++;
+         }
+         dest[length] = '\0';
+     } else {
+         i =  length-1;
+         dest[i+setup] = '\0';
+         while(i >= 0) {       //把src字符串的内容复制到dest下,从末尾开始拷贝
+              p[i] = src[i];
+              //printf("src[%d] = %c\n",i,src[i]);
+              i--;
+         }
+     }
+}
+/*before  xx,aaaaaa,xx  先计算出src.a的length
+            ^      ^
+            |      |
+            p1     p2
+**after   xx,bbb,xx     计算出dest.b的length
+            ^   ^
+            |   |
+            p1  p2
+*/
+int NMEA_StrReplace(u8 *buf,u8 cx,char* replaceBuf) {
+    u8 posx,i = 0;
+    u8 *p1,*p2;
+    char aLength = 0,bLength = 0;
+
+    posx = NMEA_Comma_Pos(buf,cx);
+    aLength = NMEA_Comma_Pos(buf,cx+1) - posx -1;
+	if(replaceBuf == NULL) {
+        bLength = 0;
+	} else {
+        bLength = strlen(replaceBuf);
+	}
+    //printf("posx = %d,aLength = %d,bLength = %d \n",posx,aLength,bLength);
+    p1 = buf + posx;
+    p2 = buf + posx + aLength;
+
+    if(aLength == bLength) {
+        
+    } else if(aLength > bLength){
+        strcpy(p1+bLength,p2,0);
+    } else {
+        strcpy(p1+bLength,p2,bLength - aLength);
+    }
+    //printf("buf = %s\n",buf);
+    for(i = 0;i < bLength;i++) {
+        p1[i] = replaceBuf[i];
+    }
+
+    return 0;
+}
+void checkCRC(u8 * buffer,u8* crc) {
+    u8 i,result;
+    for(result=buffer[1],i=2;buffer[i]!='*';i++) {
+         result^=buffer[i];
+    }
+    sprintf(crc,"%x",result);
+    //printf("checkCRC 0x%s\n",crc);
+}
+
+void NMEA_UpdateCRC(u8 *buf) {
+    u8 i = 0,crc[2];
+    while(1) {
+        if(buf[i] == '*') {
+            break;
+        }
+        i++;
+    }
+    checkCRC(buf,crc);
+    buf[i+1] = crc[0];
+    buf[i+2] = crc[1];
 }
 
 

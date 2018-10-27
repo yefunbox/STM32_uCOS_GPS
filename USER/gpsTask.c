@@ -10,6 +10,7 @@ char g_Mode = 0;
 nmeaPOS lastPos;
 nmeaPOS nowPos;
 double dst;
+void enableUbxCfg(u8 cfg);
 
 void handerGpsData(const char* gpsBuffer,int size);
 
@@ -167,6 +168,93 @@ enum CAR_MODE
 };
 char validLocation_has_dir_count = 0;  //有效定位，且有航向计数,
 extern char* g_gpsData_ptr;
+GpsFrame gpsFrame;
+u8 gpsFrameData[9][100];
+u8 hDOP_Diff = 0;
+u8 hDOP_Last = 0; 
+u8 validDirPosCnt = 0;
+u8 validPosCnt= 0;
+int hAcc = 0;
+#define TYPE_NO_POS             1
+#define TYPE_BYPASS             2
+#define TYPE_LAST_VAILID_POS    3
+
+void _sendNmeaProtocol(int type) {
+    switch(type) {
+        case 4:
+             if(gpsFrame.nmeaPtrRMC != 0) {
+				 NMEA_StrReplace(gpsFrame.nmeaPtrRMC,3,NULL); //latitude
+				 NMEA_StrReplace(gpsFrame.nmeaPtrRMC,5,NULL); //longitude
+			 }
+			 if(gpsFrame.nmeaPtrGGA != 0) {
+				 NMEA_StrReplace(gpsFrame.nmeaPtrGGA,3,NULL); //latitude
+				 NMEA_StrReplace(gpsFrame.nmeaPtrGGA,5,NULL); //longitude
+
+			 }
+			 if(gpsFrame.nmeaPtrGLL != 0) {
+				 NMEA_StrReplace(gpsFrame.nmeaPtrGLL,3,NULL); //latitude
+				 NMEA_StrReplace(gpsFrame.nmeaPtrGLL,5,NULL); //longitude
+	         }
+			 break;
+	    case TYPE_BYPASS:
+
+			 break;
+		case TYPE_LAST_VAILID_POS:
+
+			 break;
+	}
+	if(gpsFrame.nmeaPtrRMC != 0) {
+	   printf("%s\n",gpsFrame.nmeaPtrRMC);
+	   gpsFrame.nmeaPtrRMC = 0;
+	}
+	if(gpsFrame.nmeaPtrGGA != 0) {
+		printf("%s\n",gpsFrame.nmeaPtrGGA);
+		gpsFrame.nmeaPtrGGA = 0;
+	}
+	if(gpsFrame.nmeaPtrGLL != 0) {
+		printf("%s\n",gpsFrame.nmeaPtrGLL);
+		gpsFrame.nmeaPtrGLL = 0;
+	}
+
+}
+void sendNmeaToUart() {
+	if(hDOP_Diff < 2) {
+		if(hAcc < 80) {
+			if(gpsx.state=='A') {   //有效定位
+				if(gpsx.dir>=0 && gpsx.dir <=360) {
+					validDirPosCnt++;
+					if(validDirPosCnt > 4) {
+	                    validPosCnt = 0;
+						_sendNmeaProtocol(TYPE_BYPASS);
+					} else {
+						_sendNmeaProtocol(TYPE_LAST_VAILID_POS);
+					}
+				} else {
+					validPosCnt++;
+					if(validPosCnt > 3) {
+						validDirPosCnt = 0;
+						if(gpsx.hdop < 80) {
+	                        _sendNmeaProtocol(TYPE_BYPASS);
+						} else {
+	                        _sendNmeaProtocol(TYPE_NO_POS);
+						}
+					} else {
+						_sendNmeaProtocol(TYPE_NO_POS);
+					}
+				}
+			} else {  //无效定位
+			    _sendNmeaProtocol(TYPE_NO_POS);
+				enableUbxCfg(1);
+				validPosCnt = 0;
+				validPosCnt = 0;
+			}
+		}else {
+			_sendNmeaProtocol(TYPE_NO_POS);
+		}
+	} else {
+	    _sendNmeaProtocol(TYPE_NO_POS);
+	}
+}
 void handerGpsData(const char* gpsBuffer,int size) {
 	char buff[300];
 	int pack_type;
@@ -175,14 +263,13 @@ void handerGpsData(const char* gpsBuffer,int size) {
 	nmeaGPGSA gsaPack;
 	nmeaGPGSV gsvpack;
 	nmeaGPVTG vtgPack;
-	int hAcc = 0;
-
+    u8 hDop_current = 0;
 	//parseGpsData(gpsBuffer,size);
 	//return;
 	//memcpy(buff, gpsBuffer, size);
 	pack_type = nmea_pack_type(&gpsBuffer[1],size);
 	//printf("pack_type %c%c= 0x%x\n",buff[4],buff[5],pack_type);
-	printf("%s\n",gpsBuffer);
+	//printf("%s\n",gpsBuffer);
 	switch(pack_type) {
 		case GPRMC:
 			 //nmea_parse_GPRMC(buff,size,&rmcPack);
@@ -195,14 +282,13 @@ void handerGpsData(const char* gpsBuffer,int size) {
 			 //hAcc = ubxhAcc();
              //printf("hAcc = %.1f\n",(double)hAcc/1000);
 			 //printf("=>%c %c<== direction=%f \n",pack.ew,pack.ns,pack.direction);
-			 //pack.declin_ew = 'E';
 			 //printf("ew=%c,mode=%c \n",pack.declin_ew,pack.mode);
-			 //memset(buff, 0, 150);
 			 //nmea_gen_GPRMC(&buff[0],150, &pack);
-			 //printf("buff = %s\n",buff);
-			 //RTC_Set(2020,10,8,18,18,18);
-			 
+			 sendNmeaToUart();
+			 memcpy(gpsFrameData[0], gpsBuffer, size);
+			 gpsFrame.nmeaPtrRMC = gpsFrameData[0];
 			 NMEA_GPRMC_Analysis(&gpsx,gpsBuffer);
+			 //printf("%s\n",gpsBuffer);
 			 //printf("%d:%d:%d ",gpsx.utc.hour,gpsx.utc.min,gpsx.utc.sec);
 			 //printf("(%d,%d)s=%c\n",gpsx.latitude,gpsx.longitude,gpsx.state);
 			 break; 
@@ -210,10 +296,21 @@ void handerGpsData(const char* gpsBuffer,int size) {
 			 //nmea_parse_GPGSA(buff,size,&gsaPack);
 			 //printf("fix_mode=%c,fix_type=%d,HDOP=%f,PDOP=%f,VDOP=%f \n",gsaPack.fix_mode,gsaPack.fix_type,
 			 //	                                                         gsaPack.HDOP,gsaPack.PDOP,gsaPack.VDOP);
+			 //memcpy(gpsFrameData[1], gpsBuffer, size);
+			 printf("%s\n",gpsBuffer);
+			 gpsFrame.nmeaPtrGSA = gpsFrameData[1];
 			 break;
 		case GPGGA:
+			 memcpy(gpsFrameData[2], gpsBuffer, size);
+			 gpsFrame.nmeaPtrGGA = gpsFrameData[2];
 			 NMEA_GPGGA_Analysis(&gpsx,gpsBuffer);
-             //printf("hdop = %d,gpssta = %d\n",gpsx.hdop,gpsx.gpssta);
+			 //printf("%s\n",gpsBuffer);
+			 if(gpsx.hdop != 0xff) {
+                 if(gpsx.hdop > hDOP_Last) hDOP_Diff = gpsx.hdop - hDOP_Last;
+				 else  hDOP_Diff = hDOP_Last - gpsx.hdop;
+				 hDOP_Last = gpsx.hdop;
+			 }
+             //printf("hdop=%d,hf=%d\n",gpsx.hdop,hDOP_Diff);
 			 break;
 		case GPGSV:
 			 //nmea_parse_GPGSV(buff,size,&gsvpack);
@@ -222,6 +319,8 @@ void handerGpsData(const char* gpsBuffer,int size) {
                  //printf("id=%02d,in_use=%d,elv=%02d,azimuth=%03d degrees,sig=%02ddb\n",gsvpack.sat_data[i].id,gsvpack.sat_data[i].in_use,
 				// 	                                               gsvpack.sat_data[i].elv,gsvpack.sat_data[i].azimuth,gsvpack.sat_data[i].sig);
 			 //}
+			 //memcpy(gpsFrameData[3], gpsBuffer, size);
+			 printf("%s\n",gpsBuffer);
 			 break;
 		case GPVTG:
 			 //nmea_parse_GPVTG(buff,size,vtgPack);
@@ -230,12 +329,14 @@ void handerGpsData(const char* gpsBuffer,int size) {
 			 //	                                      vtgPack.dec,vtgPack.dec_m,
 			 //	                                      vtgPack.spn,vtgPack.spn_n,
 			 //	                                      vtgPack.spk,vtgPack.spk_k);
-			 
+			 //memcpy(gpsFrameData[4], gpsBuffer, size);
 			 NMEA_GPVTG_Analysis(&gpsx,gpsBuffer);
+			 printf("%s\n",gpsBuffer);
 			 //printf("gpsx dir = %f\n",gpsx.dir);
 			 break;
 		case GPGLL:
-			 //printf("GPGLL\n");
+			 memcpy(gpsFrameData[5], gpsBuffer, size);
+			 gpsFrame.nmeaPtrGLL = gpsFrameData[5];
 			 break;
 	}
 
@@ -283,12 +384,12 @@ void printHexToString(const char* buffer,u8 buffer_sz) {
 }
 int valid = 0;
 void handerUbxData(const char* ubxBuffer,int size) {
-	int hAcc = 0;
 	
 	printHexToString(ubxBuffer,size);
 	if(ubxBuffer[2]==0x01 && ubxBuffer[3]==0x02 ) {//0xB5,0x62,0x01,0x02
 		hAcc = ubxhAcc(ubxBuffer,size);
 		//printf("hAcc = %.2f m\n",(double)hAcc/1000);
+		#if 0
 		if(hAcc < 100*1000 && hAcc > 0) { //hAcc < 100m
 		    if(valid == 0) {
 				valid = 1;
@@ -297,6 +398,7 @@ void handerUbxData(const char* ubxBuffer,int size) {
 		} else {
 			valid = 0;
 		}
+		#endif
 	}
 }
 /*判断是否为有效定位
@@ -322,7 +424,7 @@ static void gpsTask (void) {
 	from_pos.lon = 114.036953;
 	to_pos.lat = 22.543366;   //前海湾地铁站(113.904669,22.543366)
 	to_pos.lon = 113.904669;
-    dst = GetDistance(from_pos,to_pos);
+    //dst = GetDistance(from_pos,to_pos);
 #else
 	from_pos.lat = 22.578779;
 	from_pos.lon = 113.907402;
@@ -338,6 +440,7 @@ static void gpsTask (void) {
 	//printf("==hour=%d:%d:%d lat=%f lon=%f\n",pack.utc.hour,pack.utc.min,pack.utc.sec,
 	//	                                     pack.lat,pack.lon);
 	//testNmeaGenerate();
+	USART2_Configuration();
 	enableUbxCfg(0);
 
    	while(1){
